@@ -162,4 +162,31 @@ class UserController extends Controller
 
         return response()->json(['message' => 'Contraseña cambiada con éxito']);
     }
+
+    public function asignarRolesYPermisos(Request $request, $userId)
+    {
+        // Validar la entrada (aquí puedes agregar más validaciones si lo necesitas)
+        $request->validate([
+            'rol' => 'required|string|exists:roles,name',
+            'permisos' => 'nullable|array',
+            'permisos.*' => 'exists:permissions,name',
+        ]);
+
+        // Buscar al usuario por ID
+        $user = User::findOrFail($userId);
+
+        // Asignar el rol al usuario
+        $user->syncRoles($request->rol);
+
+        // Asignar los permisos al usuario si existen
+        if ($request->has('permisos') && is_array($request->permisos)) {
+            $user->syncPermissions($request->permisos);
+        }
+
+        // Retornar una respuesta adecuada
+        return response()->json([
+            'message' => 'Roles y permisos asignados correctamente.',
+            'user' => $user,
+        ]);
+    }
 }
