@@ -19,6 +19,9 @@ Route::middleware([IsUserAuth::class])->group(function () {
         Route::get('me', 'getUser');
     });
 
+    // Ruta para obtener todos los permisos de usuario
+    Route::get('mis-permisos', [AuthController::class, 'getUserPermissions']);
+
     // Ruta para actualizar el perfil del usuario
     Route::put('me', [UserController::class, 'updateProfile']);
 

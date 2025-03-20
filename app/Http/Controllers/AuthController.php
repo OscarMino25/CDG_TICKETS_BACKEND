@@ -13,8 +13,9 @@ use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
-    public function register(Request $request){
-        $validator = Validator::make($request -> all(), [
+    public function register(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
             'name' => 'required|string|min:10|max:100',
             'role' => 'required|string|in:admin,user',
             'email' => 'required|string|email|min:10|max:50|unique:users',
@@ -23,49 +24,68 @@ class AuthController extends Controller
 
         ]);
 
-        if($validator -> fails ()){
-            return response()->json(['error' => $validator -> errors()], 422);
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()], 422);
         }
         User::create([
-            'name' => $request ->get('name'),
-            'role' => $request ->get('role'),
-            'email' => $request ->get('email'),
-            'password' => bcrypt($request ->get('password')),
+            'name' => $request->get('name'),
+            'role' => $request->get('role'),
+            'email' => $request->get('email'),
+            'password' => bcrypt($request->get('password')),
         ]);
-        return response ()->json(['message'=>'User created succesfully'], 201);
+        return response()->json(['message' => 'User created succesfully'], 201);
     }
 
-    public function login (Request $request){
-        $validator = Validator::make($request -> all(), [
+    public function login(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
             'email' => 'required|string|email|min:10|max:50',
             'password' => 'required|string|min:10',
 
 
         ]);
 
-        if($validator -> fails ()){
-            return response()->json(['error' => $validator -> errors()], 422);
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()], 422);
         }
         $credentials = $request->only(['email', 'password']);
 
-        try{
-            if(!$token = JWTAuth::attempt($credentials)){
-                return response ()->json(['error' => 'Credenciales invalidas'], 401);
+        try {
+            if (!$token = JWTAuth::attempt($credentials)) {
+                return response()->json(['error' => 'Credenciales invalidas'], 401);
             }
-            return response ()->json(['token'=>$token], 200);
-        } catch(JWTException $e){
-            return response()->json(['error' => 'Could not create token',$e], 500);
-        }     
+            return response()->json(['token' => $token], 200);
+        } catch (JWTException $e) {
+            return response()->json(['error' => 'Could not create token', $e], 500);
+        }
     }
 
-    public function getUser(){
-        $user = Auth::user();
-        return response()->json(['user'=>$user],200);
+    public function getUser()
+{
+    $user = Auth::user();
 
-    }
+    // Obtener los roles del usuario
+    $roles = $user->roles; // Esto debería funcionar si el trait HasRoles está presente
 
-    public function logout(){
+    return response()->json([
+        'user' => $user,
+        'roles' => $roles
+    ], 200);
+}
+
+    public function logout()
+    {
         JWTAuth::invalidate(JWTAuth::getToken());
-        return response ()->json(['message'=>'Logued out succesfully'], 200);
+        return response()->json(['message' => 'Logued out succesfully'], 200);
+    }
+
+    public function getUserPermissions(Request $request)
+    {
+        $user = Auth::user();
+        $permisos = $user->permissions->pluck('name'); // Obtiene los permisos asignados
+
+        return response()->json([
+            'permisos' => $permisos
+        ]);
     }
 }
