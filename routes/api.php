@@ -28,9 +28,14 @@ Route::middleware([IsUserAuth::class])->group(function () {
     // Ruta para cambiar la contraseña
     Route::put('change-password', [UserController::class, 'changePassword']);
 
+    // Ruta para ver los permisos asignados a un rol
+    Route::get('/roles/{roleId}/permissions', [RolePermissionController::class, 'getPermissionsForRole']);
+
+    Route::get('users', [UserController::class, 'index']); // Mostrar todos los usuarios
+
     Route::middleware([IsAdmin::class])->group(function () {
 
-        Route::get('users', [UserController::class, 'index']); // Mostrar todos los usuarios
+     
         Route::post('users', [UserController::class, 'store']); // Crear un nuevo usuario
         Route::get('/users/search', [UserController::class, 'search']); // Búsqueda de usuarios
         Route::put('users/{id}', [UserController::class, 'update']); // Editar un usuario
@@ -51,7 +56,6 @@ Route::middleware([IsUserAuth::class])->group(function () {
         // Ruta para asignar roles y permisos a un usuario
         Route::put('users/{userId}/roles-y-permisos', [UserController::class, 'asignarRolesYPermisos']);
 
-        // Ruta para ver los permisos asignados a un rol
-        Route::get('/roles/{roleId}/permissions', [RolePermissionController::class, 'getPermissionsForRole']);
+        
     });
 });

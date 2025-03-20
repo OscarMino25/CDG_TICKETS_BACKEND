@@ -80,12 +80,24 @@ class AuthController extends Controller
     }
 
     public function getUserPermissions(Request $request)
-    {
-        $user = Auth::user();
-        $permisos = $user->permissions->pluck('name'); // Obtiene los permisos asignados
+{
+    $user = Auth::user();
 
+    // Verifica si el usuario tiene un rol asignado
+    if ($user->roles->isEmpty()) {
         return response()->json([
-            'permisos' => $permisos
-        ]);
+            'message' => 'El usuario no tiene rol asignado.'
+        ], 400);
     }
+
+    // Obtener el primer rol del usuario
+    $role = $user->roles->first();
+
+    // Obtener los permisos asignados al rol
+    $permisos = $role->permissions->pluck('name'); // Los permisos del rol
+
+    return response()->json([
+        'permisos' => $permisos
+    ]);
+}
 }
