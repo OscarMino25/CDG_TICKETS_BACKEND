@@ -16,4 +16,9 @@ class Catalogo extends Model
     {
         return $this->belongsTo(Tipificacion::class);
     }
+
+    public function motivos()
+    {
+        return $this->hasMany(Motivo::class);
+    }
 }
