@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Api\CatalogoController;
 use App\Http\Controllers\Api\TipificacionController;
 use App\Http\Controllers\Api\MotivoController;
+use App\Http\Controllers\Api\EstadoController;
 use App\Http\Controllers\RolePermissionController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\Api\SlaController;
@@ -54,7 +55,7 @@ Route::middleware([IsUserAuth::class])->group(function () {
         Route::get('permissions', [RolePermissionController::class, 'indexPermissions']); // Listar permisos
         Route::post('permissions', [RolePermissionController::class, 'storePermission']); // Crear un permiso
         Route::delete('permissions/{id}', [RolePermissionController::class, 'destroyPermission']); // Eliminar un permiso
-       
+
         Route::put('users/{userId}/roles-y-permisos', [UserController::class, 'asignarRolesYPermisos']); // Ruta para asignar roles y permisos a un usuario
 
         Route::get('catalogos', [CatalogoController::class, 'index']); // Mostrar todos los catálogos
@@ -80,6 +81,12 @@ Route::middleware([IsUserAuth::class])->group(function () {
         Route::get('motivos/{id}', [MotivoController::class, 'show']); // Obtener un motivo por ID
         Route::put('motivos/{id}', [MotivoController::class, 'update']); // Actualizar un motivo
         Route::delete('motivos/{id}', [MotivoController::class, 'destroy']); // Eliminar un motivo
+
+        Route::get('estados', [EstadoController::class, 'index']); // Obtener todos los estados
+        Route::post('estados', [EstadoController::class, 'store']); // Crear un nuevo estado
+        Route::get('estados/{id}', [EstadoController::class, 'show']); // (opcional) Obtener un estado por ID
+        Route::put('estados/{id}', [EstadoController::class, 'update']); // Actualizar un estado
+        Route::delete('estados/{id}', [EstadoController::class, 'destroy']); // Eliminar un estado
 
     });
 });
