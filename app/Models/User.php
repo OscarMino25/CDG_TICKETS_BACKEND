@@ -59,4 +59,13 @@ class User extends Authenticatable implements JWTSubject
         return [];
     }
 
+    public function grupos()
+    {
+        return $this->belongsToMany(Grupo::class, 'grupo_user')->withTimestamps();
+    }
+
+    public function ticketsAsignados()
+    {
+        return $this->belongsToMany(Ticket::class, 'ticket_usuario', 'usuario_id', 'ticket_id');
+    }
 }
